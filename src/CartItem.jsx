@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addItem, removeItem, updateQuantity } from './CartSlice';
+import { addItem, removeItem, updateQuantity, clearCart } from './CartSlice';
 import './CartItem.css';
 
 const CartItem = ({ onContinueShopping }) => {
   const cart = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
+  const [showModal, setShowModal] = useState(false);
 
   // Calculate total amount for all products in the cart
   const calculateTotalAmount = () => {
@@ -43,7 +44,17 @@ const CartItem = ({ onContinueShopping }) => {
   };
 
   const handleCheckoutShopping = (e) => {
-    alert('Functionality to be added for future reference');
+    if (e) e.preventDefault();
+    if (cart.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    dispatch(clearCart());
   };
 
   return (
@@ -73,6 +84,16 @@ const CartItem = ({ onContinueShopping }) => {
         <br />
         <button className="get-started-button1" onClick={(e) => handleCheckoutShopping(e)}>Checkout</button>
       </div>
+
+      {showModal && (
+        <div className="checkout-modal-overlay">
+          <div className="checkout-modal-content">
+            <h3>Order Confirmed! 🌿</h3>
+            <p>Thank you for shopping with Paradise Nursery! Your order has been placed successfully.</p>
+            <button className="get-started-button" style={{ marginTop: '20px' }} onClick={handleCloseModal}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
